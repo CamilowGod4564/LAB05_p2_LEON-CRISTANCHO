@@ -12,7 +12,7 @@ export default function RealtimeStatus({ technologyLabel, status = 'idle', room,
   if (status === 'idle') {
     return (
       <p className="rt-status" data-status="idle">
-        Real time is off. Choose Socket.IO to draw with other tabs.
+        Real time is off. Choose Socket.IO or STOMP to draw with other tabs.
       </p>
     )
   }

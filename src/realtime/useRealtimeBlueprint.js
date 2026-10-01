@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { RT_TECHNOLOGIES, roomFor } from '../config.js'
 import socketIoTransport from './socketIoTransport.js'
+import stompTransport from './stompTransport.js'
 
 const defaultTransports = {
   [RT_TECHNOLOGIES.SOCKET_IO]: socketIoTransport,
+  [RT_TECHNOLOGIES.STOMP]: stompTransport,
 }
 
 // Conecta el plano abierto (author/name) a la tecnología RT elegida.

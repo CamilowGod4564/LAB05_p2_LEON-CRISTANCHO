@@ -102,7 +102,8 @@ export default function RealtimeBlueprintPage() {
   const handlePointAdd = (point) => {
     if (!current) return
     dispatch(pointAdded({ author: current.author, name: current.name, point }))
-    // El servidor reenvía a los demás de la sala (no al emisor), así que no hay duplicados.
+    // El punto se pinta localmente; los transportes nunca devuelven el eco propio
+    // (Socket.IO no lo envía y STOMP lo descarta), así que no hay duplicados.
     realtime.publishPoint(point)
   }
 
