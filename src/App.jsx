@@ -1,5 +1,6 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
 import BlueprintsPage from './pages/BlueprintsPage.jsx'
+import RealtimeBlueprintPage from './pages/RealtimeBlueprintPage.jsx'
 import BlueprintDetailPage from './pages/BlueprintDetailPage.jsx'
 import BlueprintEditorPage from './pages/BlueprintEditorPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
@@ -15,12 +16,14 @@ export default function App() {
           <NavLink to="/" end>
             Blueprints
           </NavLink>
+          <NavLink to="/realtime">Real time</NavLink>
           <NavLink to="/login">Login</NavLink>
           <NavLink to="/blueprints/new">Create blueprint</NavLink>
         </nav>
       </header>
       <Routes>
         <Route path="/" element={<BlueprintsPage />} />
+        <Route path="/realtime" element={<RealtimeBlueprintPage />} />
         <Route
           path="/blueprints/new"
           element={

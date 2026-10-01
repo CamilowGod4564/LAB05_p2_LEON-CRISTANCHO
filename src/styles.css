@@ -519,6 +519,49 @@ label {
   background-size: 24px 24px;
 }
 
+/* Vista colaborativa (LAB06) */
+.rt-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.rt-field,
+.rt-selector {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.action-bar-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rt-selector {
+  min-width: 160px;
+}
+
+.draft-badge {
+  margin-left: 10px;
+  padding: 2px 8px;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 999px;
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-weight: 650;
+  vertical-align: middle;
+}
+
 .blueprint-canvas {
   display: block;
   width: 100%;
@@ -660,6 +703,12 @@ label {
 
   .search-form .btn {
     width: 100%;
+  }
+
+  .action-bar,
+  .action-bar-buttons {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .top-blueprint-item {

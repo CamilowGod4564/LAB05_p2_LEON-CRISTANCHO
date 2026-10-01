@@ -1,15 +1,22 @@
 import { useEffect, useRef } from 'react'
 
 const padding = 24
+const keyboardStep = 20
 
+// Sistemas de coordenadas:
+//   'fit'     → escala el dibujo para que quepa (solo lectura).
+//   'percent' → puntos en 0..100 (editor del LAB05).
+//   'pixels'  → puntos en píxeles del canvas (tiempo real, igual que el backend guía).
 export default function BlueprintCanvas({
   points = [],
   width = 520,
   height = 360,
   interactive = false,
+  coordinates,
   onPointAdd,
 }) {
   const ref = useRef(null)
+  const mode = coordinates ?? (interactive ? 'percent' : 'fit')
 
   useEffect(() => {
     const canvas = ref.current
@@ -22,7 +29,9 @@ export default function BlueprintCanvas({
     )
     let canvasPoints
 
-    if (interactive) {
+    if (mode === 'pixels') {
+      canvasPoints = validPoints.map((point) => ({ x: point.x, y: point.y }))
+    } else if (mode === 'percent') {
       const drawableWidth = canvas.width - padding * 2
       const drawableHeight = canvas.height - padding * 2
       canvasPoints = validPoints.map((point) => ({
@@ -86,10 +95,16 @@ export default function BlueprintCanvas({
       context.arc(point.x, point.y, 4, 0, Math.PI * 2)
       context.fill()
     }
-  }, [points, interactive, width, height])
+  }, [points, mode, width, height])
 
   const addPointAt = (x, y) => {
     if (!interactive || !onPointAdd) return
+    if (mode === 'pixels') {
+      const point = { x: Math.round(x), y: Math.round(y) }
+      if (point.x < 0 || point.x > width || point.y < 0 || point.y > height) return
+      onPointAdd(point)
+      return
+    }
     const drawableWidth = width - padding * 2
     const drawableHeight = height - padding * 2
     const point = {
@@ -116,6 +131,13 @@ export default function BlueprintCanvas({
     if (!interactive || (event.key !== 'Enter' && event.key !== ' ')) return
     event.preventDefault()
     const previous = points.at(-1)
+    if (mode === 'pixels') {
+      addPointAt(
+        previous ? Math.min(width, previous.x + keyboardStep) : width / 2,
+        previous ? Math.min(height, previous.y + keyboardStep) : height / 2,
+      )
+      return
+    }
     const nextX = previous ? Math.min(100, previous.x + 5) : 50
     const nextY = previous ? Math.min(100, previous.y + 5) : 50
     addPointAt(

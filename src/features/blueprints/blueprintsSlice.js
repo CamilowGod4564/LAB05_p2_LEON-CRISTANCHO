@@ -121,7 +121,21 @@ const slice = createSlice({
     deleteError: null,
     optimisticSnapshots: {},
   },
-  reducers: {},
+  reducers: {
+    // Plano nuevo, aún no guardado en el backend (se crea con Create).
+    draftStarted(state, action) {
+      const { author, name } = action.payload
+      state.current = { author, name, points: [], isNew: true }
+      state.currentStatus = 'succeeded'
+      state.currentError = null
+    },
+    // Punto agregado al plano abierto (clic local o evento de tiempo real).
+    pointAdded(state, action) {
+      const { author, name, point } = action.payload
+      if (!sameBlueprint(state.current, author, name)) return
+      state.current.points.push({ x: point.x, y: point.y })
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAuthors.pending, (state) => {
@@ -171,6 +185,9 @@ const slice = createSlice({
         if (!state.byAuthor[blueprint.author]) state.byAuthor[blueprint.author] = []
         upsertBlueprint(state.byAuthor[blueprint.author], blueprint)
         if (!state.authors.includes(blueprint.author)) state.authors.push(blueprint.author)
+        if (sameBlueprint(state.current, blueprint.author, blueprint.name)) {
+          state.current = cloneBlueprint(blueprint)
+        }
         state.createStatus = 'succeeded'
         state.createError = null
       })
@@ -305,5 +322,7 @@ const slice = createSlice({
       })
   },
 })
+
+export const { draftStarted, pointAdded } = slice.actions
 
 export default slice.reducer
