@@ -432,6 +432,11 @@ label {
   background: rgba(84, 180, 255, 0.055);
 }
 
+.blueprints-table tbody tr.selected-row {
+  background: rgba(84, 180, 255, 0.12);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
 .blueprint-name-cell {
   font-weight: 600;
 }
