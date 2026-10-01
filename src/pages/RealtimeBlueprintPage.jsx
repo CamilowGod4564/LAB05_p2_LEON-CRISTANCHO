@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import AuthorPanel from '../components/AuthorPanel.jsx'
 import BlueprintActionBar from '../components/BlueprintActionBar.jsx'
 import BlueprintCanvas from '../components/BlueprintCanvas.jsx'
+import HealthPanel from '../components/HealthPanel.jsx'
 import RealtimeStatus from '../components/RealtimeStatus.jsx'
 import { RT_TECHNOLOGIES } from '../config.js'
 import {
@@ -52,10 +53,7 @@ export default function RealtimeBlueprintPage() {
   const isNew = Boolean(current?.isNew)
 
   // Solo se conecta cuando hay un plano abierto (no mientras carga).
-  const handleRemoteUpdate = useCallback(
-    (update) => dispatch(pointsAppended(update)),
-    [dispatch],
-  )
+  const handleRemoteUpdate = useCallback((update) => dispatch(pointsAppended(update)), [dispatch])
   const realtime = useRealtimeBlueprint({
     technology,
     author: hasBlueprint ? current.author : null,
@@ -191,6 +189,8 @@ export default function RealtimeBlueprintPage() {
           onOpen={openBlueprint}
           onRetry={() => refreshAuthor(author)}
         />
+
+        <HealthPanel />
       </section>
 
       <section className="card blueprint-viewer" aria-labelledby="rt-current-title">

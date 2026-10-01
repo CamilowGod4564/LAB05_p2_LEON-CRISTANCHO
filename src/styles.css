@@ -597,6 +597,43 @@ label {
   color: var(--danger);
 }
 
+.health-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.health-item {
+  display: grid;
+  grid-template-columns: 9px auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 10px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.health-item strong {
+  color: var(--text);
+}
+
+.health-item[data-status='up'] .rt-dot {
+  background: #4ade80;
+}
+
+.health-item[data-status='down'] .rt-dot {
+  background: var(--danger);
+}
+
+.health-url {
+  overflow: hidden;
+  grid-column: 2 / -1;
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .draft-badge {
   margin-left: 10px;
   padding: 2px 8px;
