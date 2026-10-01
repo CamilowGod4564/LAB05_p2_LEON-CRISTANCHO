@@ -551,6 +551,52 @@ label {
   min-width: 160px;
 }
 
+.rt-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.rt-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.rt-status[data-status='connected'] .rt-dot {
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
+}
+
+.rt-status[data-status='connecting'] .rt-dot,
+.rt-status[data-status='reconnecting'] .rt-dot {
+  background: #fbbf24;
+}
+
+.rt-status[data-status='error'] .rt-dot,
+.rt-status[data-status='disconnected'] .rt-dot,
+.rt-status[data-status='unsupported'] .rt-dot {
+  background: var(--danger);
+}
+
+.rt-room {
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.rt-error {
+  color: var(--danger);
+}
+
 .draft-badge {
   margin-left: 10px;
   padding: 2px 8px;

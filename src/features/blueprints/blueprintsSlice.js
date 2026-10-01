@@ -135,6 +135,12 @@ const slice = createSlice({
       if (!sameBlueprint(state.current, author, name)) return
       state.current.points.push({ x: point.x, y: point.y })
     },
+    // Puntos recibidos de otro cliente por tiempo real (blueprint-update).
+    pointsAppended(state, action) {
+      const { author, name, points } = action.payload
+      if (!sameBlueprint(state.current, author, name)) return
+      for (const point of points) state.current.points.push({ x: point.x, y: point.y })
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -323,6 +329,6 @@ const slice = createSlice({
   },
 })
 
-export const { draftStarted, pointAdded } = slice.actions
+export const { draftStarted, pointAdded, pointsAppended } = slice.actions
 
 export default slice.reducer

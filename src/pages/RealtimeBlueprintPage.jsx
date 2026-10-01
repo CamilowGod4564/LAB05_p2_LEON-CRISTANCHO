@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AuthorPanel from '../components/AuthorPanel.jsx'
 import BlueprintActionBar from '../components/BlueprintActionBar.jsx'
 import BlueprintCanvas from '../components/BlueprintCanvas.jsx'
+import RealtimeStatus from '../components/RealtimeStatus.jsx'
 import { RT_TECHNOLOGIES } from '../config.js'
 import {
   createBlueprint,
@@ -11,8 +12,15 @@ import {
   fetchBlueprint,
   fetchByAuthor,
   pointAdded,
+  pointsAppended,
   updateBlueprint,
 } from '../features/blueprints/blueprintsSlice.js'
+import useRealtimeBlueprint from '../realtime/useRealtimeBlueprint.js'
+
+const technologyLabels = {
+  [RT_TECHNOLOGIES.SOCKET_IO]: 'Socket.IO',
+  [RT_TECHNOLOGIES.STOMP]: 'STOMP',
+}
 
 const CANVAS_WIDTH = 520
 const CANVAS_HEIGHT = 360
@@ -42,6 +50,18 @@ export default function RealtimeBlueprintPage() {
   const busy = [createStatus, updateStatus, deleteStatus].includes('loading')
   const hasBlueprint = Boolean(current) && currentStatus !== 'loading'
   const isNew = Boolean(current?.isNew)
+
+  // Solo se conecta cuando hay un plano abierto (no mientras carga).
+  const handleRemoteUpdate = useCallback(
+    (update) => dispatch(pointsAppended(update)),
+    [dispatch],
+  )
+  const realtime = useRealtimeBlueprint({
+    technology,
+    author: hasBlueprint ? current.author : null,
+    name: hasBlueprint ? current.name : null,
+    onRemoteUpdate: handleRemoteUpdate,
+  })
 
   const refreshAuthor = (target) => dispatch(fetchByAuthor(target))
 
@@ -82,6 +102,8 @@ export default function RealtimeBlueprintPage() {
   const handlePointAdd = (point) => {
     if (!current) return
     dispatch(pointAdded({ author: current.author, name: current.name, point }))
+    // El servidor reenvía a los demás de la sala (no al emisor), así que no hay duplicados.
+    realtime.publishPoint(point)
   }
 
   const currentPayload = () => ({
@@ -198,6 +220,12 @@ export default function RealtimeBlueprintPage() {
           onCreate={handleCreate}
           onSave={handleSave}
           onDelete={handleDelete}
+        />
+        <RealtimeStatus
+          technologyLabel={technologyLabels[technology]}
+          status={realtime.status}
+          room={realtime.room}
+          error={realtime.error}
         />
 
         {currentStatus === 'loading' && (
