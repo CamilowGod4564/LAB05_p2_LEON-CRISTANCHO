@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import AuthorPanel from '../components/AuthorPanel.jsx'
 import BlueprintCanvas from '../components/BlueprintCanvas.jsx'
+import { countPoints } from '../utils/blueprints.js'
 import {
   deleteBlueprint,
   fetchAuthors,
@@ -29,11 +31,6 @@ export default function BlueprintsPage() {
   const [selectedAuthor, setSelectedAuthor] = useState('')
   const isAuthenticated = Boolean(localStorage.getItem('token'))
   const items = byAuthor[selectedAuthor] || []
-
-  const totalPoints = useMemo(
-    () => items.reduce((acc, blueprint) => acc + (blueprint.points?.length || 0), 0),
-    [items],
-  )
 
   useEffect(() => {
     dispatch(fetchAuthors())
@@ -139,7 +136,7 @@ export default function BlueprintsPage() {
                     <span>{blueprint.author}</span>
                   </div>
                   <span className="top-blueprint-count">
-                    {blueprint.points?.length || 0} <small>pts</small>
+                    {countPoints(blueprint)} <small>pts</small>
                   </span>
                   <button
                     className="btn btn-open"
@@ -155,118 +152,42 @@ export default function BlueprintsPage() {
           )}
         </section>
 
-        <section className="card results-panel" aria-labelledby="results-title">
-          <div className="results-heading">
-            <div>
-              <p className="eyebrow">Author results</p>
-              <h2 className="panel-title" id="results-title">
-                {selectedAuthor ? `${selectedAuthor}'s blueprints` : 'Results'}
-              </h2>
-            </div>
-            {selectedAuthor && (
-              <span className="result-count">
-                {items.length} {items.length === 1 ? 'blueprint' : 'blueprints'}
-              </span>
-            )}
-          </div>
+        <AuthorPanel
+          author={selectedAuthor}
+          items={items}
+          status={byAuthorStatus}
+          error={byAuthorError}
+          selectedName={current?.author === selectedAuthor ? current?.name : null}
+          openDisabled={currentStatus === 'loading'}
+          onOpen={openBlueprint}
+          onRetry={() => dispatch(fetchByAuthor(selectedAuthor))}
+          renderActions={(blueprint) =>
+            isAuthenticated && (
+              <>
+                <Link
+                  className="btn"
+                  to={`/blueprints/${encodeURIComponent(blueprint.author)}/${encodeURIComponent(blueprint.name)}/edit`}
+                >
+                  Edit
+                </Link>
+                <button
+                  className="btn btn-danger"
+                  type="button"
+                  disabled={deleteStatus === 'loading'}
+                  onClick={() => removeBlueprint(blueprint)}
+                >
+                  Delete
+                </button>
+              </>
+            )
+          }
+        />
 
-          {byAuthorStatus === 'loading' && (
-            <p className="status-message" role="status">
-              Loading blueprints...
-            </p>
-          )}
-          {deleteStatus === 'loading' && (
-            <p className="status-message" role="status">
-              Deleting blueprint...
-            </p>
-          )}
-          {byAuthorStatus === 'failed' && (
-            <div className="status-message error-message retry-banner" role="alert">
-              <span>Could not load blueprints: {byAuthorError}</span>
-              <button
-                className="btn"
-                type="button"
-                onClick={() => dispatch(fetchByAuthor(selectedAuthor))}
-              >
-                Retry
-              </button>
-            </div>
-          )}
-          {!selectedAuthor && byAuthorStatus !== 'loading' && (
-            <p className="empty-message">Enter an author name to see their blueprints.</p>
-          )}
-          {selectedAuthor &&
-            !items.length &&
-            byAuthorStatus !== 'loading' &&
-            byAuthorStatus !== 'failed' && (
-              <p className="empty-message">No blueprints found for this author.</p>
-            )}
-
-          {!!items.length && (
-            <div className="table-scroll">
-              <table className="blueprints-table">
-                <caption className="sr-only">Blueprints created by {selectedAuthor}</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Blueprint name</th>
-                    <th className="numeric-cell" scope="col">
-                      Number of points
-                    </th>
-                    <th className="action-cell" scope="col">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((blueprint) => (
-                    <tr key={blueprint.name}>
-                      <td className="blueprint-name-cell">{blueprint.name}</td>
-                      <td className="numeric-cell">
-                        <span className="point-count">{blueprint.points?.length || 0}</span>
-                      </td>
-                      <td className="action-cell">
-                        <div className="blueprint-actions">
-                          <button
-                            className="btn btn-open"
-                            type="button"
-                            onClick={() => openBlueprint(blueprint)}
-                            disabled={currentStatus === 'loading'}
-                          >
-                            Open
-                          </button>
-                          {isAuthenticated && (
-                            <>
-                              <Link
-                                className="btn"
-                                to={`/blueprints/${encodeURIComponent(blueprint.author)}/${encodeURIComponent(blueprint.name)}/edit`}
-                              >
-                                Edit
-                              </Link>
-                              <button
-                                className="btn btn-danger"
-                                type="button"
-                                disabled={deleteStatus === 'loading'}
-                                onClick={() => removeBlueprint(blueprint)}
-                              >
-                                Delete
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <footer className="results-footer">
-            <span>Total user points</span>
-            <strong>{totalPoints}</strong>
-          </footer>
-        </section>
-
+        {deleteStatus === 'loading' && (
+          <p className="status-message" role="status">
+            Deleting blueprint...
+          </p>
+        )}
         {deleteStatus === 'failed' && (
           <p className="status-message error-message" role="alert">
             Could not delete blueprint: {deleteError}

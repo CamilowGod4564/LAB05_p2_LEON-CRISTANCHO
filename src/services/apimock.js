@@ -27,6 +27,15 @@ const blueprints = [
       { x: 6, y: 7 },
     ],
   },
+  // Coincide con el plano de ejemplo del backend guía de Socket.IO.
+  {
+    author: 'juan',
+    name: 'plano-1',
+    points: [
+      { x: 10, y: 10 },
+      { x: 40, y: 50 },
+    ],
+  },
 ]
 
 function cloneBlueprint(blueprint) {

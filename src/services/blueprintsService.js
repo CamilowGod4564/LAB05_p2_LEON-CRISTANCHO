@@ -1,6 +1,7 @@
 import apimock from './apimock.js'
 import apiclient from './apiclientService.js'
+import { USE_MOCK } from '../config.js'
 
-const blueprintsService = import.meta.env.VITE_USE_MOCK === 'true' ? apimock : apiclient
+const blueprintsService = USE_MOCK ? apimock : apiclient
 
 export default blueprintsService

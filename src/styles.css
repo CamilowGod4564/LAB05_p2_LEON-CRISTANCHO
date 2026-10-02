@@ -432,6 +432,11 @@ label {
   background: rgba(84, 180, 255, 0.055);
 }
 
+.blueprints-table tbody tr.selected-row {
+  background: rgba(84, 180, 255, 0.12);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
 .blueprint-name-cell {
   font-weight: 600;
 }
@@ -512,6 +517,132 @@ label {
     linear-gradient(90deg, rgba(84, 180, 255, 0.025) 1px, transparent 1px),
     #091526;
   background-size: 24px 24px;
+}
+
+/* Vista colaborativa (LAB06) */
+.rt-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.rt-field,
+.rt-selector {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.action-bar-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rt-selector {
+  min-width: 160px;
+}
+
+.rt-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.rt-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.rt-status[data-status='connected'] .rt-dot {
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
+}
+
+.rt-status[data-status='connecting'] .rt-dot,
+.rt-status[data-status='reconnecting'] .rt-dot {
+  background: #fbbf24;
+}
+
+.rt-status[data-status='error'] .rt-dot,
+.rt-status[data-status='disconnected'] .rt-dot,
+.rt-status[data-status='unsupported'] .rt-dot {
+  background: var(--danger);
+}
+
+.rt-room {
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.rt-error {
+  color: var(--danger);
+}
+
+.health-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.health-item {
+  display: grid;
+  grid-template-columns: 9px auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 10px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.health-item strong {
+  color: var(--text);
+}
+
+.health-item[data-status='up'] .rt-dot {
+  background: #4ade80;
+}
+
+.health-item[data-status='down'] .rt-dot {
+  background: var(--danger);
+}
+
+.health-url {
+  overflow: hidden;
+  grid-column: 2 / -1;
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.draft-badge {
+  margin-left: 10px;
+  padding: 2px 8px;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 999px;
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-weight: 650;
+  vertical-align: middle;
 }
 
 .blueprint-canvas {
@@ -655,6 +786,12 @@ label {
 
   .search-form .btn {
     width: 100%;
+  }
+
+  .action-bar,
+  .action-bar-buttons {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .top-blueprint-item {
